@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Edit Movie</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-       
         body {
             height: 100vh;
             margin: 0;
@@ -19,9 +19,17 @@
         }
 
         @keyframes gradientBG {
-            0%{background-position:0% 50%}
-            50%{background-position:100% 50%}
-            100%{background-position:0% 50%}
+            0% {
+                background-position: 0% 50%
+            }
+
+            50% {
+                background-position: 100% 50%
+            }
+
+            100% {
+                background-position: 0% 50%
+            }
         }
 
         .container {
@@ -29,7 +37,7 @@
             background: rgba(255, 255, 255, 0.95);
             padding: 35px;
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             animation: fadeIn 1s ease-out;
         }
 
@@ -42,13 +50,15 @@
             margin-bottom: 25px;
         }
 
-        input, select {
+        input,
+        select {
             transition: all 0.3s ease;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             border-color: #ff0080;
-            box-shadow: 0 0 15px rgba(255,0,128,0.3);
+            box-shadow: 0 0 15px rgba(255, 0, 128, 0.3);
             transform: scale(1.03);
         }
 
@@ -59,7 +69,7 @@
 
         button:hover {
             transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(255,0,128,0.3);
+            box-shadow: 0 8px 20px rgba(255, 0, 128, 0.3);
         }
 
         .alert {
@@ -68,82 +78,120 @@
         }
 
         @keyframes fadeIn {
-            from {opacity: 0; transform: translateY(-20px);}
-            to {opacity: 1; transform: translateY(0);}
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes slideDown {
-            from {opacity: 0; transform: translateY(-50px);}
-            to {opacity: 1; transform: translateY(0);}
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes fadeInUp {
-            from {opacity: 0; transform: translateY(20px);}
-            to {opacity: 1; transform: translateY(0);}
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2>Edit Movie</h2>
-    <div id="message"></div>
-    <form id="editMovieForm"  enctype="multipart/form-data" method = "POST">
-        {% csrf_token %}
-          <input type="hidden" id="movieId" value="{{ movie.id }}">
-        <input type="text" name="title" placeholder="Title" value="{{ movie.title }}" class="form-control mb-3" required>
-        <input type="text" name="genre" placeholder="Genre" value="{{ movie.genre }}" class="form-control mb-3" required>
-        <select name="status" class="form-control mb-3" required>
-            <option value="">Select Status</option>
+    <div class="container">
+        <h2>Edit Movie</h2>
+        <div id="message"></div>
+        <form id="editMovieForm" enctype="multipart/form-data" method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="movieId" value="{{ movie.id }}">
+            <input type="text" name="title" placeholder="Title" value="{{ movie.title }}" class="form-control mb-3"
+                required>
+            <input type="text" name="genre" placeholder="Genre" value="{{ movie.genre }}" class="form-control mb-3"
+                required>
+           
+            <select name="status" class="form-control mb-3" required>
+                <option value="">Select Status</option>
 
-            <option value="Completed" {% if movie.status == 'Completed' %}selected{% endif %}>Completed</option>
-            <option value="Planned" {% if movie.status == 'Planned' %}selected{% endif %}>Planned</option>
-        </select>
-        <input type="number" name="release_year" placeholder="Release Year" value="{{ movie.release_year }}" class="form-control mb-3" required>
-        <input type="number" step="0.1" name="rating" placeholder="Rating (0-10)" value="{{ movie.rating }}" class="form-control mb-3" required>
-        <!-- <input type="file" name="image_url" accept="image_url/*" class="form-control mb-3"> -->
-         <input type="file" name="image_url" class="form-control mb-3">
-
-
-        <button type="submit" class="btn btn-warning mb-2">Update Movie</button>
-        <a href="{% url 'index' %}" class="btn btn-secondary mt-2">Back to List</a>
-    </form>
-</div>
-
-<script>
+                <option value="Completed" {% if movie.status == 'Completed' %}selected{% endif %}>Completed</option>
+                <option value="Plan to Watch" {% if movie.status == 'Plan to Watch' %}selected{% endif %}>Plan to Watch</option>
+            </select>
 
 
+            <input type="number" name="release_year" placeholder="Release Year" value="{{ movie.release_year }}"
+                class="form-control mb-3" required>
+            <input type="number" step="0.1" name="rating" placeholder="Rating (0-10)" value="{{ movie.rating }}"
+                class="form-control mb-3" required>
 
-$(document).ready(function(){
-    $('#editMovieForm').on('submit', function(e){
-        e.preventDefault();
+            
+            {% if movie.image_url %}
+            <div class="mb-3 text-center">
+                <p>Current Image:</p>
+                <img src="{{ movie.image_url.url }}" alt="{{ movie.title }}" width="150" class="img-thumbnail mb-2">
+            </div>
+            {% endif %}
 
-        let formData = new FormData(this);
-        let movieId = $('#movieId').val();  // this is from hidden input
+            <label for="image_url">Change Image (optional):</label>
+            <input type="file" name="image_url" class="form-control mb-3">
 
-        $.ajax({
-            type: 'POST',
-            url: `/edit/${movieId}/`,  // ← FIXED: Build URL in JS
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response){
-                $('#message').html('<div class="alert alert-success">'+response.success+'</div>');
-                setTimeout(function(){ window.location.href = "{% url 'index' %}"; }, 1000);
-            },
-            error: function(xhr){
-                let errorText = xhr.responseJSON?.error || 'Something went wrong.';
-                $('#message').html('<div class="alert alert-danger">'+errorText+'</div>');
-            }
+
+            <button type="submit" class="btn btn-warning mb-2">Update Movie</button>
+            <a href="{% url 'index' %}" class="btn btn-secondary mt-2">Back to List</a>
+        </form>
+    </div>
+
+    <script>
+
+
+
+        $(document).ready(function () {
+            $('#editMovieForm').on('submit', function (e) {
+                e.preventDefault();
+
+                let formData = new FormData(this);
+                let movieId = $('#movieId').val();  // this is from hidden input
+
+                $.ajax({
+                    type: 'POST',
+                    url: `/edit/${movieId}/`,  // ← FIXED: Build URL in JS
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        $('#message').html('<div class="alert alert-success">' + response.success + '</div>');
+                        setTimeout(function () { window.location.href = "{% url 'index' %}"; }, 1000);
+                    },
+                    error: function (xhr) {
+                        let errorText = xhr.responseJSON?.error || 'Something went wrong.';
+                        $('#message').html('<div class="alert alert-danger">' + errorText + '</div>');
+                    }
+                });
+            });
         });
-    });
-});
-</script>
+    </script>
 
 
 
 
-</script>
 
 </body>
+
 </html>

@@ -58,7 +58,9 @@ def edit_movie(request, id):
         movie.status = status
         movie.release_year = int(release_year)
         movie.rating = float(rating)
-        movie.image_url = image 
+        if image:
+            movie.image_url = image
+        # movie.image_url = image 
         movie.save()
 
         return JsonResponse({'success': 'Movie updated successfully!'})
