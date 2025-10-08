@@ -15,6 +15,7 @@ def index(request):
 
 
 def add_movie(request):
+    print(request.method)
     if request.method == 'POST':
         title = request.POST.get('title')
         genre = request.POST.get('genre')
